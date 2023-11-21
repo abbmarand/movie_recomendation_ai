@@ -12,6 +12,7 @@
     "axios": "^1.6.1",
     "dotenv": "^16.3.1",
     "node-fetch": "^3.3.2",
+    "pgvector": "^0.1.5",
     "puppeteer": "^21.5.0"
   }
 }
