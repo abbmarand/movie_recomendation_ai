@@ -43,30 +43,24 @@ def process_movie(movie):
     # Do something with each movie
     moviedata = [f"{movie['title']}: {movie['overview']}"]
     embed = calculatevec(moviedata, f"{movie['title']}")
-    return embed
+    return embed.tolist()[0]
+
 
 
 def process_tv(tv):
     # Do something with each TV show
     tvdata = [f"{tv['name']}: {tv['overview']}"]
     embed = calculatevec(tvdata, f"{tv['name']}")
-    return embed
+    return embed.tolist()[0]
 
 
-def gettv(i):
+def getmovie(i):
     return_list = []
     moviearr = get_movie_list(i)
     for movie in moviearr:
         embed = process_movie(movie)
-        numpy_array = embed.numpy()
-        list_values = numpy_array.tolist()
-        
-        # Add the movie name along with the embedded tensor values
-        data = {
-            'name': movie['name'],
-            'tensor_values': list_values
-        }
-        return_list.append(data)
+        movie['embedding'] = embed
+        return_list.append(movie)
     return return_list
 
 def gettv(i):
@@ -74,15 +68,8 @@ def gettv(i):
     tvarr = get_tv_list(i)
     for tv in tvarr:
         embed = process_tv(tv)
-        numpy_array = embed.numpy()
-        list_values = numpy_array.tolist()
-        
-        # Add the movie name along with the embedded tensor values
-        data = {
-            'name': tv['name'],
-            'tensor_values': list_values
-        }
-        return_list.append(data)
+        tv['embedding'] = embed
+        return_list.append(tv)
     return return_list
 
             
