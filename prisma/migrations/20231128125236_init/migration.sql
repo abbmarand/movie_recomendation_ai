@@ -1,0 +1,22 @@
+-- AlterTable
+ALTER TABLE "movie" ALTER COLUMN "original_language" DROP NOT NULL,
+ALTER COLUMN "original_title" DROP NOT NULL,
+ALTER COLUMN "overview" DROP NOT NULL,
+ALTER COLUMN "popularity" DROP NOT NULL,
+ALTER COLUMN "poster_path" DROP NOT NULL,
+ALTER COLUMN "release_date" DROP NOT NULL,
+ALTER COLUMN "title" DROP NOT NULL,
+ALTER COLUMN "video" DROP NOT NULL,
+ALTER COLUMN "vote_average" DROP NOT NULL,
+ALTER COLUMN "vote_count" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "tv" ALTER COLUMN "first_air_date" DROP NOT NULL,
+ALTER COLUMN "name" DROP NOT NULL,
+ALTER COLUMN "original_language" DROP NOT NULL,
+ALTER COLUMN "original_name" DROP NOT NULL,
+ALTER COLUMN "overview" DROP NOT NULL,
+ALTER COLUMN "popularity" DROP NOT NULL,
+ALTER COLUMN "poster_path" DROP NOT NULL,
+ALTER COLUMN "vote_average" DROP NOT NULL,
+ALTER COLUMN "vote_count" DROP NOT NULL;

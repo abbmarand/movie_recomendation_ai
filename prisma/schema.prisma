@@ -15,31 +15,46 @@ datasource db {
 model tv {
   id                Int                         @id
   embedding         Unsupported("vector(384)")?
-  first_air_date    String
+  first_air_date    String?
   genre_ids         Int[]
-  name              String
+  name              String?
   origin_country    String[]
-  original_language String
-  original_name     String
-  overview          String
-  popularity        Float
-  poster_path       String
-  vote_average      Float
-  vote_count        Int
+  original_language String?
+  original_name     String?
+  overview          String?
+  popularity        Float?
+  poster_path       String?
+  vote_average      Float?
+  vote_count        Int?
 }
 
 model movie {
   embedding         Unsupported("vector(384)")?
   id                Int                         @id
   genre_ids         Int[]
-  original_language String
-  original_title    String
-  overview          String
-  popularity        Float
-  poster_path       String
-  release_date      String
-  title             String
-  video             Boolean
-  vote_average      Float
-  vote_count        Int
+  original_language String?
+  original_title    String?
+  overview          String?
+  popularity        Float?
+  poster_path       String?
+  release_date      String?
+  title             String?
+  video             Boolean?
+  vote_average      Float?
+  vote_count        Int?
+}
+
+model item {
+  id        Int                       @id @default(autoincrement())
+  embedding Unsupported("vector(4)")?
+}
+
+model iiitem {
+  id        Int                        @id @default(autoincrement())
+  embedding Unsupported("vector(20)")?
+}
+
+model testt {
+  id        Int                         @id @default(autoincrement())
+  embedding Unsupported("vector(384)")?
 }
