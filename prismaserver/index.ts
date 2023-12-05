@@ -2,10 +2,12 @@ import { PrismaClient } from '@prisma/client'
 import pgvector from 'pgvector/utils'
 import axios from 'axios'
 import express from 'express'
+import cors from 'cors'
 const prisma = new PrismaClient()
 const app = express()
 const port = 4000
 app.use(express.json())
+app.use(cors())
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
