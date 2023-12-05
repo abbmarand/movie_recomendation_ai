@@ -5,7 +5,7 @@ import express from 'express'
 const prisma = new PrismaClient()
 const app = express()
 const port = 4000
-
+app.use(express.json())
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
@@ -248,16 +248,22 @@ async function getdata (pages: any) {
     }
 }
 
+async function getclosest (embedding: any) {
+    try {
+        const tv = await getclosesttvbyembedding(embedding[0])
+        const mov = await getclosestmoviebyembedding(embedding[0])
+        return { tv, mov }
+    } catch (error) {
+        console.log(error)
+        return { tv: {}, mov: {} }
+    }
+
+}
+
 async function main () {
     const b = await getclosesttvbyid(76600)//willy wonka
     console.log(b)
 }
-//getdata(500)
-//main()
-
-app.get('/getfirstpage', (req: any, res: any) => {
-    res.send('Hello World!')
-})
 
 app.get('/browse', async (req: any, res: any) => {
     try {
@@ -281,6 +287,18 @@ app.get('/getclosestbyid', async (req: any, res: any) => {
         var id = req.query.id
         const movies = await getclosestmoviebyid(id)
         res.send({ movies })
+    } catch (e) {
+        console.log(e)
+    }
+
+})
+
+app.post('/generateandget', async (req: any, res: any) => {
+    try {
+        const desc = req.body.desc
+        const embedding = await axios.post(`http://127.0.0.1:5000/gen`, { desc })
+        const rec = await getclosest(embedding.data.result)
+        res.send({ rec })
     } catch (e) {
         console.log(e)
     }

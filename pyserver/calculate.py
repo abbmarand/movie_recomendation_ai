@@ -93,7 +93,17 @@ def movie_function():
     else:
         return {'error': 'Number not provided'}
     
-    
+@app.route('/gen', methods=['POST'])
+def generate_function():
+    print("/generate")
+    data = request.get_json()
+    print(data)
+    desc = data.get('desc')
+    print(desc)
+    embedding = calculatevec(desc,'personal')
+    embedding_list = embedding.tolist()
+    return {'result': embedding_list}
+
 @app.route('/')
 def index():
     return "hello"
