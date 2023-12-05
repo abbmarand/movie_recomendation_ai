@@ -249,7 +249,6 @@ async function getdata (pages: any) {
         console.log(`done page: ${i} in ${((end - start) / 1000).toFixed(3)} seconds`)
     }
 }
-
 async function getclosest (embedding: any) {
     try {
         const tv = await getclosesttvbyembedding(embedding[0])

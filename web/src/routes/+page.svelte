@@ -1,7 +1,6 @@
 <script>
     // @ts-nocheck
     import axios from "axios";
-    import e from "cors";
     let recomendation = false;
     let desc = "";
     async function send() {
@@ -39,6 +38,10 @@
                     <div>
                         {movie.original_title}
                     </div>
+                    <img
+                        src="https://image.tmdb.org/t/p/w500{movie.poster_path}"
+                        alt=""
+                    />
                 {/each}
             </div>
             <div class="flex flex-col">
@@ -47,6 +50,10 @@
                     <div>
                         {tv.name}
                     </div>
+                    <img
+                        src="https://image.tmdb.org/t/p/w500{tv.poster_path}"
+                        alt=""
+                    />
                 {/each}
             </div>
         {/if}
