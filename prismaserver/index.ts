@@ -1,7 +1,14 @@
 import { PrismaClient } from '@prisma/client'
 import pgvector from 'pgvector/utils'
 import axios from 'axios'
+import express from 'express'
 const prisma = new PrismaClient()
+const app = express()
+const port = 4000
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+})
 
 
 async function embedMovie (page: Number) {
@@ -145,7 +152,7 @@ async function getclosestmoviebyembedding (rawembedding: any) {
     const result = []
     let items: any
     const embedding = pgvector.toSql(rawembedding)
-    items = await prisma.$queryRaw`SELECT id, embedding::text FROM movie ORDER BY embedding <-> ${embedding}::vector LIMIT 5`
+    items = await prisma.$queryRaw`SELECT id, embedding::text FROM movie ORDER BY embedding <-> ${embedding}::vector LIMIT 4`
     for (const item of items) {
         const closestdata = await prisma.movie.findFirst({
             where: {
@@ -161,7 +168,7 @@ async function getclosesttvbyembedding (rawembedding: any) {
     const result = []
     let items: any
     const embedding = pgvector.toSql(rawembedding)
-    items = await prisma.$queryRaw`SELECT id, embedding::text FROM tv ORDER BY embedding <-> ${embedding}::vector LIMIT 5`
+    items = await prisma.$queryRaw`SELECT id, embedding::text FROM tv ORDER BY embedding <-> ${embedding}::vector LIMIT 4`
     for (const item of items) {
         const closestdata = await prisma.tv.findFirst({
             where: {
@@ -176,19 +183,16 @@ async function getclosesttvbyembedding (rawembedding: any) {
 
 async function getclosestmoviebyid (sid: any) {
     let search: any
-    search = await prisma.movie.findFirst({//doesnt select embedding
-        where: {
-            id: sid
-        }
-    })
-    console.log(search)
+    search = await prisma.$queryRaw`SELECT id, embedding::text FROM movie WHERE id = ${sid}`
+    if (!search[0]) {
+        search = await prisma.$queryRaw`SELECT id, embedding::text FROM tv WHERE id = ${sid}`
+    }
     if (search) {
-        const rawembedding = search.embedding
-        console.log(rawembedding)
+        const rawembedding = JSON.parse(search[0].embedding)
         const result = []
         let items: any
         const embedding = pgvector.toSql(rawembedding)
-        items = await prisma.$queryRaw`SELECT id, embedding::text FROM movie ORDER BY embedding <-> ${embedding}::vector LIMIT 5`
+        items = await prisma.$queryRaw`SELECT id, embedding::text FROM movie ORDER BY embedding <-> ${embedding}::vector LIMIT 4`
         for (const item of items) {
             const closestdata = await prisma.movie.findFirst({
                 where: {
@@ -205,17 +209,16 @@ async function getclosestmoviebyid (sid: any) {
 
 async function getclosesttvbyid (sid: any) {
     let search: any
-    search = await prisma.tv.findFirst({
-        where: {
-            id: sid
-        }
-    })
+    search = await prisma.$queryRaw`SELECT id, embedding::text FROM tv WHERE id = ${sid}`
+    if (!search[0]) {
+        search = await prisma.$queryRaw`SELECT id, embedding::text FROM movie WHERE id = ${sid}`
+    }
     if (search) {
-        const rawembedding = search.embedding
+        const rawembedding = JSON.parse(search[0].embedding)
         const result = []
         let items: any
         const embedding = pgvector.toSql(rawembedding)
-        items = await prisma.$queryRaw`SELECT id, embedding::text FROM tv ORDER BY embedding <-> ${embedding}::vector LIMIT 5`
+        items = await prisma.$queryRaw`SELECT id, embedding::text FROM tv ORDER BY embedding <-> ${embedding}::vector LIMIT 4`
         for (const item of items) {
             const closestdata = await prisma.tv.findFirst({
                 where: {
@@ -246,8 +249,40 @@ async function getdata (pages: any) {
 }
 
 async function main () {
-    const b = await getclosestmoviebyid(787699)//willy wonka
+    const b = await getclosesttvbyid(76600)//willy wonka
     console.log(b)
 }
 //getdata(500)
-main()
+//main()
+
+app.get('/getfirstpage', (req: any, res: any) => {
+    res.send('Hello World!')
+})
+
+app.get('/browse', async (req: any, res: any) => {
+    try {
+        var avg = parseFloat(req.query.avg)
+        var count = parseInt(req.query.count)
+        const movies = await prisma.movie.findMany({
+            where: { vote_average: { gt: avg }, vote_count: { gt: count } },
+            orderBy: { popularity: "desc" },
+            take: 10
+        })
+        res.send(movies)
+    } catch (e) {
+        console.log(e)
+        res.send("error")
+    }
+
+})
+
+app.get('/getclosestbyid', async (req: any, res: any) => {
+    try {
+        var id = req.query.id
+        const movies = await getclosestmoviebyid(id)
+        res.send({ movies })
+    } catch (e) {
+        console.log(e)
+    }
+
+})
