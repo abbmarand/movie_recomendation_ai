@@ -1,8 +1,13 @@
 <script>
     // @ts-nocheck
     import axios from "axios";
+    import Movie from "$lib/movie.svelte";
+    import TVShow from "$lib/tv.svelte";
+    import { onMount } from "svelte";
+    let newsrecomendations = [];
     let recomendation = false;
     let desc = "";
+    let newsgotten = false;
     async function send() {
         console.log(desc);
         if (desc !== "") {
@@ -17,13 +22,31 @@
             desc = "";
         }
     }
+    onMount(async () => {
+        const news = await axios.post("http://localhost:4000/news", {
+            country: "us",
+        });
+        for (const n of news.data.articles) {
+            const title = n.title;
+            const rec = await axios.post(
+                "http://localhost:4000/generateandget",
+                {
+                    desc: title,
+                },
+            );
+            const ne = { new: n, rec };
+            newsrecomendations.push(ne);
+        }
+        newsgotten = true;
+        console.log(newsrecomendations);
+    });
     const onKeyPress = (e) => {
         if (e.charCode === 13) send();
     };
 </script>
 
 <main class="w-screen h-screen flex">
-    <h1 class="text-3xl font-bold underline">Movie Recomender</h1>
+    <h1 class="text-3xl font-bold underline">Movie Recommender</h1>
     <textarea
         bind:value={desc}
         on:keypress={onKeyPress}
@@ -36,26 +59,25 @@
                 movies
                 {#each recomendation.mov as movie}
                     <div>
-                        {movie.original_title}
+                        <Movie {movie} />
                     </div>
-                    <img
-                        src="https://image.tmdb.org/t/p/w500{movie.poster_path}"
-                        alt=""
-                    />
                 {/each}
             </div>
             <div class="flex flex-col">
                 series
                 {#each recomendation.tv as tv}
                     <div>
-                        {tv.name}
+                        <TVShow {tv} />
                     </div>
-                    <img
-                        src="https://image.tmdb.org/t/p/w500{tv.poster_path}"
-                        alt=""
-                    />
                 {/each}
             </div>
+        {/if}
+        {#if newsgotten}
+            {#each newsrecomendations as ne}
+                <div>
+                    {ne}
+                </div>
+            {/each}
         {/if}
     </div>
 </main>

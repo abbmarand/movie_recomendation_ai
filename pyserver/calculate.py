@@ -2,7 +2,7 @@ import requests
 from transformers import AutoTokenizer, AutoModel
 import torch
 import torch.nn.functional as F
-from flask import Flask, jsonify, request
+from flask import Flask,  request
 app = Flask(__name__)
 themoviedbkey = "84f3c7d3535844352187af60533b5e46"
 tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')

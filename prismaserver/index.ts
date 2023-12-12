@@ -3,6 +3,8 @@ import pgvector from 'pgvector/utils'
 import axios from 'axios'
 import express from 'express'
 import cors from 'cors'
+const newsapi = process.env.NEWS
+const rapid = process.env.RAPID
 const prisma = new PrismaClient()
 const app = express()
 const port = 4000
@@ -305,3 +307,53 @@ app.post('/generateandget', async (req: any, res: any) => {
     }
 
 })
+app.post('/news', async (req: any, res: any) => {
+    try {
+        //const result = []
+        const country = req.body.country
+        var url = 'https://newsapi.org/v2/top-headlines?' +
+            'country=us&' +
+            'apiKey=1e7e78bf86ce4f369adc871d94f6c0cc'
+        const ans = await axios.get(`https://newsapi.org/v2/top-headlines?country=${country}&apiKey=${newsapi}`)
+        /*/
+        for (let i = 0; i < ans.data.articles.length; i++) {
+            let article = ans.data.articles[i]
+            //const trans = await translate("en", article.title)
+            console.log(article)
+            console.log(trans)
+            article.trans = trans
+            result.push(article)
+        }
+        /*/
+
+        res.send(ans.data)
+
+    } catch (e) {
+        console.log(e)
+    }
+
+})
+async function translate (lang: string, text: string) {
+    try {
+        const options = {
+            method: 'GET',
+            url: 'https://translated-mymemory---translation-memory.p.rapidapi.com/get',
+            params: {
+                langpair: `${lang}|en`,
+                q: text,
+                mt: '1',
+                onlyprivate: '0',
+                de: 'a@b.c'
+            },
+            headers: {
+                'X-RapidAPI-Key': rapid,
+                'X-RapidAPI-Host': 'translated-mymemory---translation-memory.p.rapidapi.com'
+            }
+        }
+        const response = await axios.request(options)
+        return response.data.responseData.translatedText
+    } catch (e) {
+        console.log(e)
+    }
+}
+
