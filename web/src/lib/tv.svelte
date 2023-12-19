@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let tv: any;
+    export let tv: { poster_path: string; id: number; name: string };
     let error = false;
     function handleError() {
         error = true;

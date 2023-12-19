@@ -1,18 +1,17 @@
 <script lang="ts">
     import Movie from "./movie.svelte";
-
     export let data: any;
+
     let error = false;
+    function handleError() {
+        error = true;
+    }
 
     if (!data) {
         console.error("Data is not defined");
         error = true;
     } else {
         console.log(data);
-    }
-
-    function handleError() {
-        error = true;
     }
 </script>
 

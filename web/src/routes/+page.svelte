@@ -5,8 +5,8 @@
     import New from "$lib/new.svelte";
     let selectedCountryCode = "in";
     let oldcode = "";
-    const countryCodes = ["se", "gb", "us", "de", "in"];
-    const languagecodes = {
+    const countryCodes: Array<string> = ["se", "gb", "us", "de", "in"];
+    const languagecodes: any = {
         se: "sv",
         gb: "en-us",
         us: "en-us",
@@ -14,7 +14,7 @@
         in: "hi",
     };
     let newsrecomendations: any[] = [];
-    let recomendation: {};
+    let recomendation: { mov: Array<any>; tv: Array<any> };
     let desc = "";
     let newsgotten = false;
     async function send() {
@@ -45,8 +45,8 @@
         });
         console.log(news);
         for (let i = 0; i < news.data.articles.length; i++) {
-            const n = news.data.articles[i];
             let title;
+            const n = news.data.articles[i];
             if (n.trans) {
                 title = n.trans;
             } else if (n.content) {

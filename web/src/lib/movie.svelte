@@ -1,5 +1,9 @@
 <script lang="ts">
-    export let movie: any;
+    export let movie: {
+        original_title: string;
+        id: number;
+        poster_path: string;
+    };
     let error = false;
     function handleError() {
         error = true;
