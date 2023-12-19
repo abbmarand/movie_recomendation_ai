@@ -1,20 +1,28 @@
 <script>
-    // TVShow.svelte
     export let tv;
+
+    let error = false;
+
+    function handleError() {
+        error = true;
+    }
 </script>
 
-<div class="h-full w-full">
-    {#if tv.poster_path === null}
-        <div class="h-4/5 w-full bg-zinc-950">error</div>
+<div class="w-[500px]">
+    {#if error}
+        <div style="width: 500px; height: 500px; background-color: gray;">
+            error
+        </div>
     {:else}
         <img
-            class="h-4/5 w-full"
             src="https://image.tmdb.org/t/p/w500{tv.poster_path}"
+            on:error={handleError}
             alt=""
         />
     {/if}
 
-    <div class="h-1/5">
+    <div class="flex flex-row justify-between">
         {tv.name}
+        <a href="/more/{tv.id} " target="_self">more like this</a>
     </div>
 </div>

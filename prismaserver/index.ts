@@ -152,11 +152,11 @@ async function embedTv (page: Number) {
 
 }
 
-async function getclosestmoviebyembedding (rawembedding: any) {
+async function getclosestmoviebyembedding (rawembedding: any, limit: any) {
     const result = []
     let items: any
     const embedding = pgvector.toSql(rawembedding)
-    items = await prisma.$queryRaw`SELECT id, embedding::text FROM movie ORDER BY embedding <-> ${embedding}::vector LIMIT 4`
+    items = await prisma.$queryRaw`SELECT id, embedding::text FROM movie ORDER BY embedding <-> ${embedding}::vector LIMIT ${limit}`
     for (const item of items) {
         const closestdata = await prisma.movie.findFirst({
             where: {
@@ -168,11 +168,11 @@ async function getclosestmoviebyembedding (rawembedding: any) {
     return result
 }
 
-async function getclosesttvbyembedding (rawembedding: any) {
+async function getclosesttvbyembedding (rawembedding: any, limit: any) {
     const result = []
     let items: any
     const embedding = pgvector.toSql(rawembedding)
-    items = await prisma.$queryRaw`SELECT id, embedding::text FROM tv ORDER BY embedding <-> ${embedding}::vector LIMIT 4`
+    items = await prisma.$queryRaw`SELECT id, embedding::text FROM tv ORDER BY embedding <-> ${embedding}::vector LIMIT ${limit}`
     for (const item of items) {
         const closestdata = await prisma.tv.findFirst({
             where: {
@@ -185,7 +185,7 @@ async function getclosesttvbyembedding (rawembedding: any) {
     return result
 }
 
-async function getclosestmoviebyid (sid: any) {
+async function getclosestmoviebyid (sid: any, limit: any) {
     let search: any
     search = await prisma.$queryRaw`SELECT id, embedding::text FROM movie WHERE id = ${sid}`
     if (!search[0]) {
@@ -196,7 +196,7 @@ async function getclosestmoviebyid (sid: any) {
         const result = []
         let items: any
         const embedding = pgvector.toSql(rawembedding)
-        items = await prisma.$queryRaw`SELECT id, embedding::text FROM movie ORDER BY embedding <-> ${embedding}::vector LIMIT 4`
+        items = await prisma.$queryRaw`SELECT id, embedding::text FROM movie ORDER BY embedding <-> ${embedding}::vector LIMIT ${limit}`
         for (const item of items) {
             const closestdata = await prisma.movie.findFirst({
                 where: {
@@ -211,7 +211,7 @@ async function getclosestmoviebyid (sid: any) {
     }
 }
 
-async function getclosesttvbyid (sid: any) {
+async function getclosesttvbyid (sid: any, limit: any) {
     let search: any
     search = await prisma.$queryRaw`SELECT id, embedding::text FROM tv WHERE id = ${sid}`
     if (!search[0]) {
@@ -222,7 +222,7 @@ async function getclosesttvbyid (sid: any) {
         const result = []
         let items: any
         const embedding = pgvector.toSql(rawembedding)
-        items = await prisma.$queryRaw`SELECT id, embedding::text FROM tv ORDER BY embedding <-> ${embedding}::vector LIMIT 4`
+        items = await prisma.$queryRaw`SELECT id, embedding::text FROM tv ORDER BY embedding <-> ${embedding}::vector LIMIT ${limit}`
         for (const item of items) {
             const closestdata = await prisma.tv.findFirst({
                 where: {
@@ -251,21 +251,16 @@ async function getdata (pages: any) {
         console.log(`done page: ${i} in ${((end - start) / 1000).toFixed(3)} seconds`)
     }
 }
-async function getclosest (embedding: any) {
+async function getclosest (embedding: any, limit: any) {
     try {
-        const tv = await getclosesttvbyembedding(embedding[0])
-        const mov = await getclosestmoviebyembedding(embedding[0])
+        const tv = await getclosesttvbyembedding(embedding[0], limit)
+        const mov = await getclosestmoviebyembedding(embedding[0], limit)
         return { tv, mov }
     } catch (error) {
         console.log(error)
         return { tv: {}, mov: {} }
     }
 
-}
-
-async function main () {
-    const b = await getclosesttvbyid(76600)//willy wonka
-    console.log(b)
 }
 
 app.get('/browse', async (req: any, res: any) => {
@@ -288,7 +283,7 @@ app.get('/browse', async (req: any, res: any) => {
 app.get('/getclosestbyid', async (req: any, res: any) => {
     try {
         var id = req.query.id
-        const movies = await getclosestmoviebyid(id)
+        const movies = await getclosestmoviebyid(id, 4)
         res.send({ movies })
     } catch (e) {
         console.log(e)
@@ -299,21 +294,34 @@ app.get('/getclosestbyid', async (req: any, res: any) => {
 app.post('/generateandget', async (req: any, res: any) => {
     try {
         const desc = req.body.desc
+        const limit = req.body.limit
         const embedding = await axios.post(`http://127.0.0.1:5000/gen`, { desc })
-        const rec = await getclosest(embedding.data.result)
+        const rec = await getclosest(embedding.data.result, limit)
         res.send({ rec })
     } catch (e) {
         console.log(e)
     }
 
 })
+
+app.post('/getbyid', async (req: any, res: any) => {
+    try {
+        const id = req.body.id
+        const limit = req.body.limit
+        const movies = await getclosestmoviebyid(id, limit)
+        const tv = await getclosesttvbyid(id, limit)
+        res.send({ movies, tv })
+    } catch (e) {
+        console.log(e)
+    }
+
+})
+
+
 app.post('/news', async (req: any, res: any) => {
     try {
         //const result = []
         const country = req.body.country
-        var url = 'https://newsapi.org/v2/top-headlines?' +
-            'country=us&' +
-            'apiKey=1e7e78bf86ce4f369adc871d94f6c0cc'
         const ans = await axios.get(`https://newsapi.org/v2/top-headlines?country=${country}&apiKey=${newsapi}`)
         /*/
         for (let i = 0; i < ans.data.articles.length; i++) {

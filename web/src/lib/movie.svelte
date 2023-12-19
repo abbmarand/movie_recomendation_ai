@@ -1,5 +1,4 @@
 <script>
-    // Movie.svelte
     export let movie;
 
     let error = false;
@@ -9,18 +8,21 @@
     }
 </script>
 
-{#if error}
-    <div style="width: 500px; height: 500px; background-color: gray;">
-        error
-    </div>
-{:else}
-    <img
-        src="https://image.tmdb.org/t/p/w500{movie.poster_path}"
-        on:error={handleError}
-        alt=""
-    />
-{/if}
+<div class="w-[500px]">
+    {#if error}
+        <div style="width: 500px; height: 500px; background-color: gray;">
+            error
+        </div>
+    {:else}
+        <img
+            src="https://image.tmdb.org/t/p/w500{movie.poster_path}"
+            on:error={handleError}
+            alt=""
+        />
+    {/if}
 
-<div>
-    {movie.original_title}
+    <div class="flex flex-row justify-between">
+        <p>{movie.original_title}</p>
+        <a href="/more/{movie.id} " target="_self">more like this</a>
+    </div>
 </div>
