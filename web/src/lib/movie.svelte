@@ -1,8 +1,6 @@
-<script>
-    export let movie;
-
+<script lang="ts">
+    export let movie: any;
     let error = false;
-
     function handleError() {
         error = true;
     }

@@ -1,12 +1,11 @@
-<script>
-    // @ts-nocheck
+<script lang="ts">
     import axios from "axios";
     import Movie from "$lib/movie.svelte";
     import TVShow from "$lib/tv.svelte";
     import New from "$lib/new.svelte";
     let selectedCountryCode = "in";
     let oldcode = "";
-    const countryCodes = ["se", "gb", "us", "de", "in"]; // Add more country codes as needed
+    const countryCodes = ["se", "gb", "us", "de", "in"];
     const languagecodes = {
         se: "sv",
         gb: "en-us",
@@ -14,8 +13,8 @@
         de: "de",
         in: "hi",
     };
-    let newsrecomendations = [];
-    let recomendation = false;
+    let newsrecomendations: any[] = [];
+    let recomendation: {};
     let desc = "";
     let newsgotten = false;
     async function send() {
@@ -33,7 +32,7 @@
             desc = "";
         }
     }
-    const onKeyPress = (e) => {
+    const onKeyPress = (e: { charCode: number }) => {
         if (e.charCode === 13) send();
     };
     async function updatenews() {

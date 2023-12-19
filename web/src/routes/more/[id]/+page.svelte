@@ -1,12 +1,11 @@
-<script>
+<script lang="ts">
     import axios from "axios";
     import { onMount } from "svelte";
     import Movie from "$lib/movie.svelte";
     import TVShow from "$lib/tv.svelte";
-    let movieid;
-    let recomendation = false;
+    let movieid: any;
+    let recomendation: { movies: Array<{}>; tv: Array<{}> };
     onMount(async () => {
-        // @ts-ignore
         movieid = window.location.href.split("/")[4];
         const more = await axios.post("http://localhost:4000/getbyid", {
             id: parseInt(movieid),

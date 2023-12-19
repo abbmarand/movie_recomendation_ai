@@ -1,8 +1,6 @@
-<script>
-    export let tv;
-
+<script lang="ts">
+    export let tv: any;
     let error = false;
-
     function handleError() {
         error = true;
     }
