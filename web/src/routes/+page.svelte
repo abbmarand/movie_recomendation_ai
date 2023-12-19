@@ -3,11 +3,17 @@
     import axios from "axios";
     import Movie from "$lib/movie.svelte";
     import TVShow from "$lib/tv.svelte";
-    import { onMount } from "svelte";
     import New from "$lib/new.svelte";
     let selectedCountryCode = "in";
     let oldcode = "";
     const countryCodes = ["se", "gb", "us", "de", "in"]; // Add more country codes as needed
+    const languagecodes = {
+        se: "sv",
+        gb: "en-us",
+        us: "en-us",
+        de: "de",
+        in: "hi",
+    };
     let newsrecomendations = [];
     let recomendation = false;
     let desc = "";
@@ -36,10 +42,22 @@
         newsrecomendations = [];
         const news = await axios.post("http://localhost:4000/news", {
             country: selectedCountryCode,
+            lang: languagecodes[selectedCountryCode],
         });
+        console.log(news);
         for (let i = 0; i < news.data.articles.length; i++) {
             const n = news.data.articles[i];
-            const title = n.title;
+            let title;
+            if (n.trans) {
+                title = n.trans;
+            } else if (n.content) {
+                title = n.content;
+            } else if (n.description) {
+                title = n.description;
+            } else {
+                title = n.title;
+            }
+
             const rec = await axios.post(
                 "http://localhost:4000/generateandget",
                 {
@@ -49,8 +67,9 @@
             );
             const ne = { new: n, rec };
             newsrecomendations.push(ne);
+            newsrecomendations = newsrecomendations;
+            newsgotten = true;
         }
-        newsgotten = true;
     }
     $: if (selectedCountryCode) {
         if (selectedCountryCode !== oldcode) {
@@ -62,25 +81,14 @@
 <main class="w-screen h-screen flex flex flex-col overflow-x-hidden">
     <form class="flex items-center w-4/5">
         <label for="simple-search" class="sr-only">Search</label>
-        <div class="relative w-full">
-            <div
-                class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-            >
-                <svg
-                    class="w-4 h-4 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 18 20"
-                >
-                    <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M3 5v10M3 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 0V6a3 3 0 0 0-3-3H9m1.5-2-2 2 2 2"
-                    />
-                </svg>
+        <div class="relative w-full flex flex-row">
+            <div>
+                <label for="countryCode">Select a country code:</label>
+                <select id="countryCode" bind:value={selectedCountryCode}>
+                    {#each countryCodes as code}
+                        <option>{code}</option>
+                    {/each}
+                </select>
             </div>
             <input
                 bind:value={desc}
@@ -115,9 +123,9 @@
         </button>
     </form>
 
-    <div class="flex flex-row h-max">
+    <div class="grid grid-cols-3 gap-4">
         {#if recomendation}
-            <div class="flex flex-col">
+            <div>
                 movies
                 {#each recomendation.mov as movie}
                     <div>
@@ -125,7 +133,7 @@
                     </div>
                 {/each}
             </div>
-            <div class="flex flex-col">
+            <div>
                 series
                 {#each recomendation.tv as tv}
                     <div>
@@ -134,18 +142,10 @@
                 {/each}
             </div>
         {/if}
-        <div>
-            <label for="countryCode">Select a country code:</label>
-            <select id="countryCode" bind:value={selectedCountryCode}>
-                {#each countryCodes as code}
-                    <option>{code}</option>
-                {/each}
-            </select>
-        </div>
-        {#if newsgotten}
-            <div class="flex flex-col">
-                based on news
 
+        {#if newsgotten}
+            <div>
+                based on news in your country
                 {#each newsrecomendations as ne}
                     <div>
                         {#if ne}

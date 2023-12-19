@@ -320,21 +320,27 @@ app.post('/getbyid', async (req: any, res: any) => {
 
 app.post('/news', async (req: any, res: any) => {
     try {
-        //const result = []
+        const result = []
         const country = req.body.country
+        const lang = req.body.lang
         const ans = await axios.get(`https://newsapi.org/v2/top-headlines?country=${country}&apiKey=${newsapi}`)
-        /*/
+
         for (let i = 0; i < ans.data.articles.length; i++) {
             let article = ans.data.articles[i]
-            //const trans = await translate("en", article.title)
-            console.log(article)
-            console.log(trans)
-            article.trans = trans
-            result.push(article)
-        }
-        /*/
+            if (lang === "sv" || lang === "de") {
+                const trans = await translate(lang, article.title)
+                console.log(article)
+                console.log(trans)
+                article.trans = trans
+                result.push(article)
+            } else {
+                result.push(article)
+            }
 
-        res.send(ans.data)
+        }
+
+
+        res.send({ articles: result })
 
     } catch (e) {
         console.log(e)

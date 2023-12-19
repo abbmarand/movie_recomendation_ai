@@ -24,12 +24,14 @@
                 error
             </div>
         {:else}
-            <img
-                src={data?.new?.urlToImage}
-                on:error={handleError}
-                alt=""
-                class="w-12 h-12"
-            />
+            <a href={data?.new?.url} target="_blank">
+                <img
+                    src={data?.new?.urlToImage}
+                    on:error={handleError}
+                    alt=""
+                    class="w-12 h-12"
+                /></a
+            >
         {/if}
 
         <div class="text-white">
