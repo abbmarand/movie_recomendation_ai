@@ -42,7 +42,9 @@
         <div class="flex flex-row justify-between">
             <p>{movie.original_title}</p>
             <p>{movie.overview}</p>
-            <a href="/more/{movie.id} " target="_self">more like this</a>
+            <a href="/more/{movie.id}?type=movie" target="_self"
+                >more like this</a
+            >
         </div>
     {/if}
 </main>

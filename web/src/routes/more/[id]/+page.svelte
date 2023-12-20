@@ -4,12 +4,15 @@
     import Movie from "$lib/movie.svelte";
     import TVShow from "$lib/tv.svelte";
     let movieid: any;
+    let type;
     let recomendation: { movies: Array<{}>; tv: Array<{}> };
     onMount(async () => {
         movieid = window.location.href.split("/")[4];
+        type = window.location.href.split("?")[1];
         const more = await axios.post("http://localhost:4000/getbyid", {
             id: parseInt(movieid),
             limit: 5,
+            type: type,
         });
         console.log(more.data);
         recomendation = more.data;

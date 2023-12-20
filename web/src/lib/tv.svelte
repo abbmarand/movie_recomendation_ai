@@ -23,6 +23,6 @@
 
     <div class="flex flex-row justify-between">
         {tv.name}
-        <a href="/more/{tv.id} " target="_self">more like this</a>
+        <a href="/more/{tv.id}?type=tv" target="_self">more like this</a>
     </div>
 </div>

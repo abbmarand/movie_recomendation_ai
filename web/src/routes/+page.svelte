@@ -56,7 +56,7 @@
             } else {
                 title = n.title;
             }
-            if (title !== "[removed]") {
+            if (title !== "[Removed]") {
                 const rec = await axios.post(
                     "http://localhost:4000/generateandget",
                     {
