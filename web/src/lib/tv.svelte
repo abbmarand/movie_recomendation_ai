@@ -12,11 +12,13 @@
             error
         </div>
     {:else}
-        <img
-            src="https://image.tmdb.org/t/p/w500{tv.poster_path}"
-            on:error={handleError}
-            alt=""
-        />
+        <a href="/tv/{tv.id}">
+            <img
+                src="https://image.tmdb.org/t/p/w500{tv.poster_path}"
+                on:error={handleError}
+                alt=""
+            />
+        </a>
     {/if}
 
     <div class="flex flex-row justify-between">

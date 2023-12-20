@@ -371,3 +371,19 @@ async function translate (lang: string, text: string) {
     }
 }
 
+
+app.get('/view', async (req: any, res: any) => {
+    try {
+        const id = parseInt(req.query.id)
+        let selected
+        selected = await prisma.movie.findFirst({ where: { id: id } })
+        if (!selected) {
+            selected = await prisma.tv.findFirst({ where: { id: id } })
+        }
+        console.log(selected)
+        res.send({ selected })
+    } catch (e) {
+        console.log(e)
+    }
+
+})
