@@ -56,18 +56,19 @@
             } else {
                 title = n.title;
             }
-
-            const rec = await axios.post(
-                "http://localhost:4000/generateandget",
-                {
-                    desc: title,
-                    limit: 1,
-                },
-            );
-            const ne = { new: n, rec };
-            newsrecomendations.push(ne);
-            newsrecomendations = newsrecomendations;
-            newsgotten = true;
+            if (title !== "[removed]") {
+                const rec = await axios.post(
+                    "http://localhost:4000/generateandget",
+                    {
+                        desc: title,
+                        limit: 1,
+                    },
+                );
+                const ne = { new: n, rec };
+                newsrecomendations.push(ne);
+                newsrecomendations = newsrecomendations;
+                newsgotten = true;
+            }
         }
     }
     $: if (selectedCountryCode) {
