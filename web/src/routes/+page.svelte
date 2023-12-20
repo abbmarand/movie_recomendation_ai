@@ -77,13 +77,17 @@
     }
 </script>
 
-<main class="w-screen h-screen flex flex flex-col overflow-x-hidden">
+<main class="w-screen h-screen flex flex flex-col overflow-x-hidden text-white">
     <form class="flex items-center w-4/5">
         <label for="simple-search" class="sr-only">Search</label>
         <div class="relative w-full flex flex-row">
-            <div>
+            <div class="bg-zinc-800">
                 <label for="countryCode">Select a country code:</label>
-                <select id="countryCode" bind:value={selectedCountryCode}>
+                <select
+                    class="bg-zinc-800"
+                    id="countryCode"
+                    bind:value={selectedCountryCode}
+                >
                     {#each countryCodes as code}
                         <option>{code}</option>
                     {/each}
