@@ -23,9 +23,9 @@
                 error
             </div>
         {:else}
-            <a href={data?.new?.url} target="_blank">
+            <a href={data?.new?.link} target="_blank">
                 <img
-                    src={data?.new?.urlToImage}
+                    src={data?.new?.image_url}
                     on:error={handleError}
                     alt=""
                     class="w-12 h-12"

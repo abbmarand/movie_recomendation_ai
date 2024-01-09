@@ -1,8 +1,10 @@
 import { PrismaClient } from '@prisma/client'
+import 'dotenv/config'
 import pgvector from 'pgvector/utils'
 import axios from 'axios'
 import express from 'express'
 import cors from 'cors'
+import { count } from 'console'
 const newsapi = process.env.NEWS
 const rapid = process.env.RAPID
 const prisma = new PrismaClient()
@@ -391,12 +393,13 @@ app.post('/news', async (req: any, res: any) => {
         const result = []
         const country = req.body.country
         const lang = req.body.lang
-        const ans = await axios.get(`https://newsapi.org/v2/top-headlines?country=${country}&apiKey=${newsapi}`)
-
-        for (let i = 0; i < ans.data.articles.length; i++) {
-            let article = ans.data.articles[i]
-            if (lang === "sv" || lang === "de") {
-                const trans = await translate(lang, article.title)
+        console.log(lang, country)
+        console.log(`https://newsdata.io/api/1/news?apikey=${newsapi}&language=${lang}`)
+        const ans = await axios.get(`https://newsdata.io/api/1/news?apikey=${newsapi}&language=${lang}`)
+        for (let i = 0; i < ans.data.results.length; i++) {
+            let article = ans.data.results[i]
+            if (article.language === "swedish" || article.language === "german" || article.language === "hindi") {
+                const trans = await translate(lang, article.description) // translate the description as the embeddings model isn't multi lingual
                 article.trans = trans
                 result.push(article)
             } else {
