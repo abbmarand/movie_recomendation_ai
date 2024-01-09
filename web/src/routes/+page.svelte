@@ -8,8 +8,8 @@
     const countryCodes: Array<string> = ["se", "gb", "us", "de", "in"];
     const languagecodes: any = {
         se: "sv",
-        gb: "en-us",
-        us: "en-us",
+        gb: "en",
+        us: "en",
         de: "de",
         in: "hi",
     };
