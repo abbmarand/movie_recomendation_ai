@@ -272,6 +272,7 @@ async function getclosestmoviebyidfromtv (sid: any, limit: any) {
     }
 }
 
+
 async function getclosesttvbyidfrommovie (sid: any, limit: any) {
     let search: any
     search = await prisma.$queryRaw`SELECT id, embedding::text FROM movie WHERE id = ${sid}`
@@ -298,6 +299,7 @@ async function getclosesttvbyidfrommovie (sid: any, limit: any) {
     }
 }
 
+//update the database WARNING: will erase everything and take aprox 1 hour to get new data
 async function getdata (pages: any) {
     const rows = await prisma.item.count()
     console.log(`deleting: ${rows}`)
@@ -312,6 +314,8 @@ async function getdata (pages: any) {
         console.log(`done page: ${i} in ${((end - start) / 1000).toFixed(3)} seconds`)
     }
 }
+
+//
 async function getclosest (embedding: any, limit: any) {
     try {
         const tv = await getclosesttvbyembedding(embedding[0], limit)
@@ -324,6 +328,7 @@ async function getclosest (embedding: any, limit: any) {
 
 }
 
+//browse, not used
 app.get('/browse', async (req: any, res: any) => {
     try {
         var avg = parseFloat(req.query.avg)
@@ -341,6 +346,8 @@ app.get('/browse', async (req: any, res: any) => {
 
 })
 
+
+//find closest embeddings for movies/tv by id of a movie/tv
 app.get('/getclosestbyid', async (req: any, res: any) => {
     try {
         var id = req.query.id
@@ -352,6 +359,7 @@ app.get('/getclosestbyid', async (req: any, res: any) => {
 
 })
 
+//generate an embedding from the python server by description and get the 5 closest ones
 app.post('/generateandget', async (req: any, res: any) => {
     try {
         const desc = req.body.desc
@@ -364,6 +372,7 @@ app.post('/generateandget', async (req: any, res: any) => {
     }
 
 })
+
 
 app.post('/getbyid', async (req: any, res: any) => {
     try {
@@ -388,6 +397,7 @@ app.post('/getbyid', async (req: any, res: any) => {
 })
 
 
+//used to get news for recomendations based on them
 app.post('/news', async (req: any, res: any) => {
     try {
         const result = []
@@ -416,6 +426,8 @@ app.post('/news', async (req: any, res: any) => {
     }
 
 })
+
+//used to translate movie descriptions as the AI model is only for english
 async function translate (lang: string, text: string) {
     try {
         const options = {
@@ -440,7 +452,7 @@ async function translate (lang: string, text: string) {
     }
 }
 
-
+//used when clicking a movie/series in the UI
 app.get('/view', async (req: any, res: any) => {
     try {
         const id = parseInt(req.query.id)
