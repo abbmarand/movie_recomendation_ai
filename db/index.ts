@@ -4,7 +4,6 @@ import pgvector from 'pgvector/utils'
 import axios from 'axios'
 import express from 'express'
 import cors from 'cors'
-import { count } from 'console'
 const newsapi = process.env.NEWS
 const rapid = process.env.RAPID
 const prisma = new PrismaClient()
@@ -354,6 +353,7 @@ app.get('/getclosestbyid', async (req: any, res: any) => {
         const movies = await getclosestmoviebyid(id, 4)
         res.send({ movies })
     } catch (e) {
+        res.error({ e })
         console.log(e)
     }
 
@@ -368,6 +368,7 @@ app.post('/generateandget', async (req: any, res: any) => {
         const rec = await getclosest(embedding.data.result, limit)
         res.send({ rec })
     } catch (e) {
+        res.error({ e })
         console.log(e)
     }
 
@@ -391,6 +392,7 @@ app.post('/getbyid', async (req: any, res: any) => {
 
         res.send({ movies, tv })
     } catch (e) {
+        res.error({ e })
         console.log(e)
     }
 
@@ -403,8 +405,6 @@ app.post('/news', async (req: any, res: any) => {
         const result = []
         const country = req.body.country
         const lang = req.body.lang
-        console.log(lang, country)
-        console.log(`https://newsdata.io/api/1/news?apikey=${newsapi}&language=${lang}`)
         const ans = await axios.get(`https://newsdata.io/api/1/news?apikey=${newsapi}&language=${lang}`)
         for (let i = 0; i < ans.data.results.length; i++) {
             let article = ans.data.results[i]
@@ -422,6 +422,7 @@ app.post('/news', async (req: any, res: any) => {
         res.send({ articles: result })
 
     } catch (e) {
+        res.error({ e })
         console.log(e)
     }
 
@@ -434,7 +435,7 @@ async function translate (lang: string, text: string) {
             method: 'GET',
             url: 'https://translated-mymemory---translation-memory.p.rapidapi.com/get',
             params: {
-                langpair: `${lang}|en`,
+                langpair: `${lang}|en`,//input language to english
                 q: text,
                 mt: '1',
                 onlyprivate: '0',
@@ -463,6 +464,7 @@ app.get('/view', async (req: any, res: any) => {
         }
         res.send({ selected })
     } catch (e) {
+        res.error({ e })
         console.log(e)
     }
 
